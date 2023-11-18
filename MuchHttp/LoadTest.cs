@@ -5,6 +5,8 @@ namespace MuchHttp;
 
 public class LoadTest
 {
+    private const int UpdateProgressIntervalMilliseconds = 200;
+    
     private readonly HttpClient _httpClient;
     private readonly string _url;
     private readonly int _concurrentRequests;
@@ -55,10 +57,11 @@ public class LoadTest
 
         async Task UpdateProgressAsync()
         {
+            await Task.Delay(UpdateProgressIntervalMilliseconds);
             while (completedRequests < _totalRequests)
             {
                 progress.Report(completedRequests, _totalRequests);
-                await Task.Delay(100);
+                await Task.Delay(UpdateProgressIntervalMilliseconds);
             }
 
             progress.Report(completedRequests, _totalRequests);
