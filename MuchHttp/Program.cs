@@ -5,9 +5,9 @@ using MuchHttp.Visualization;
 
 CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
-var urlOption = RequiredOption<Uri>("-u", "--url", "The URL to direct all HTTP requests to");
-var concurrentRequestsOption = RequiredOption<int>("-c", "--concurrent", "The maximum number of concurrently sent requests");
-var totalRequestsOption = RequiredOption<int>("-n", "--total", "The total number of requests to send");
+var urlOption = RequiredOption<Uri>("-u", "--url", "URL", "The URL to direct all HTTP requests to");
+var concurrentRequestsOption = RequiredOption<int>("-c", "--concurrent", "concurrent requests", "The maximum number of concurrently sent requests");
+var totalRequestsOption = RequiredOption<int>("-n", "--total", "total requests", "The total number of requests to send");
 
 var rootCommand = new RootCommand("Perform HTTP GET requests against a specified URL with a configurable level of concurrency.")
 {
@@ -50,11 +50,12 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
     }
 }
 
-static Option<T> RequiredOption<T>(string alias, string name, string description)
+static Option<T> RequiredOption<T>(string alias, string name, string helpName, string description)
 {
     return new Option<T>(new [] { alias }, description)
     {
         Name = name,
+        ArgumentHelpName = helpName,
         IsRequired = true
     };
 }
