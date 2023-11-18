@@ -16,7 +16,7 @@ public class LoadTest
     {
         _httpClient = httpClient;
         _url = url;
-        _concurrentRequests = concurrentRequests;
+        _concurrentRequests = Math.Min(concurrentRequests, totalRequests);
         _totalRequests = totalRequests;
     }
 
