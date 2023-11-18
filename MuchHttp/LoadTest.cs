@@ -8,11 +8,11 @@ public class LoadTest
     private const int UpdateProgressIntervalMilliseconds = 200;
     
     private readonly HttpClient _httpClient;
-    private readonly string _url;
+    private readonly Uri _url;
     private readonly int _concurrentRequests;
     private readonly int _totalRequests;
 
-    public LoadTest(HttpClient httpClient, string url, int concurrentRequests, int totalRequests)
+    public LoadTest(HttpClient httpClient, Uri url, int concurrentRequests, int totalRequests)
     {
         _httpClient = httpClient;
         _url = url;

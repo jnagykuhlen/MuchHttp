@@ -18,4 +18,12 @@ public class ConsoleBlockWriter
     {
         Console.WriteLine($" {property.PadRight(MaxPropertyWidth, '.')}: {value}");
     }
+
+    public void WriteException(Exception exception)
+    {
+        var previousColor = Console.ForegroundColor;
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"{exception.GetType().Name}: {exception.Message}");
+        Console.ForegroundColor = previousColor;
+    }
 }
