@@ -17,7 +17,7 @@ var rootCommand = new RootCommand("Perform HTTP GET requests against a specified
 };
 
 rootCommand.SetHandler(PerformAsync, urlOption, concurrentRequestsOption, totalRequestsOption);
-await rootCommand.InvokeAsync(args);
+return await rootCommand.InvokeAsync(args);
 
 
 async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
