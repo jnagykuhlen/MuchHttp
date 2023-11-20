@@ -22,47 +22,50 @@ await rootCommand.InvokeAsync(args);
 
 async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
 {
-    ConsoleBlockWriter consoleWriter = new ConsoleBlockWriter { MaxPropertyWidth = 24 };
-    consoleWriter.WriteHeading($"Starting load test with {totalRequests} requests ({concurrentRequests} concurrent)");
-    consoleWriter.WriteSpacing();
-    
+    ConsoleBlock.Colored(ConsoleColor.Cyan, () =>
+        ConsoleBlock.Heading($"Starting load test with {totalRequests} requests ({concurrentRequests} concurrent)")
+    );
+
     try
     {
         ConsoleProgressBar progressBar = new ConsoleProgressBar { Width = 64 };
 
         using var httpClient = new HttpClient();
         var loadTestResult = await new LoadTest(httpClient, url, concurrentRequests, totalRequests).PerformAsync(progressBar);
-        
-        consoleWriter.WriteHeading("Summary:");
-        consoleWriter.WriteProperty("Successful requests", loadTestResult.SuccessfulRequests);
-        consoleWriter.WriteProperty("Failed requests", loadTestResult.FailedRequests);
-        consoleWriter.WriteProperty("Average", $"{loadTestResult.AverageMilliseconds:N2} ms");
-        consoleWriter.WriteProperty("Median", $"{loadTestResult.MedianMilliseconds:N2} ms");
-        consoleWriter.WriteProperty("Min", $"{loadTestResult.MinMilliseconds:N2} ms");
-        consoleWriter.WriteProperty("Max", $"{loadTestResult.MaxMilliseconds:N2} ms");
-        consoleWriter.WriteSpacing();
+
+        ConsoleBlock.Create(24, "Summary:", block =>
+        {
+            block.WriteProperty("Successful requests", loadTestResult.SuccessfulRequests);
+            block.WriteProperty("Failed requests", loadTestResult.FailedRequests);
+            block.WriteProperty("Average", $"{loadTestResult.AverageMilliseconds:N2} ms");
+            block.WriteProperty("Median", $"{loadTestResult.MedianMilliseconds:N2} ms");
+            block.WriteProperty("Min", $"{loadTestResult.MinMilliseconds:N2} ms");
+            block.WriteProperty("Max", $"{loadTestResult.MaxMilliseconds:N2} ms");
+        });
 
         if (loadTestResult.FailedRequests > 0)
         {
-            ConsoleBlockWriter errorConsoleWriter = new ConsoleBlockWriter { MaxPropertyWidth = 64 };
-        
-            errorConsoleWriter.WriteHeading("Errors:");
-            foreach ((string errorMessage, int count) in loadTestResult.ErrorMessages)
-                errorConsoleWriter.WriteProperty(errorMessage, count);
-        
-            errorConsoleWriter.WriteSpacing();
+            ConsoleBlock.Colored(ConsoleColor.Red, () =>
+            {
+                ConsoleBlock.Create(64, "Errors:", block =>
+                {
+                    foreach ((string errorMessage, int count) in loadTestResult.ErrorMessages)
+                        block.WriteProperty(errorMessage, count);
+                });
+            });
         }
     }
     catch (Exception exception)
     {
-        consoleWriter.WriteException(exception);
-        consoleWriter.WriteSpacing();
+        ConsoleBlock.Colored(ConsoleColor.Red, () =>
+            ConsoleBlock.Exception(exception)
+        );
     }
 }
 
 static Option<T> RequiredOption<T>(string alias, string name, string helpName, string description)
 {
-    return new Option<T>(new [] { alias }, description)
+    return new Option<T>(new[] { alias }, description)
     {
         Name = name,
         ArgumentHelpName = helpName,
