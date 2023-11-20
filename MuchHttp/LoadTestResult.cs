@@ -30,8 +30,10 @@ public class LoadTestResult
     public double MinMilliseconds => _sortedRequestMilliseconds[0];
     public double MaxMilliseconds => _sortedRequestMilliseconds[^1];
 
-    public IReadOnlyDictionary<string, int> ErrorMessages => _requestResults
+    public IEnumerable<AggregatedError> AggregatedErrors => _requestResults
         .Where(requestResult => !requestResult.IsSuccessful)
-        .GroupBy(requestResult => requestResult.Error!)
-        .ToDictionary(group => group.Key, group => group.Count());
+        .GroupBy(requestResult => requestResult.ErrorMessage!)
+        .Select(group => new AggregatedError(group.Key, group.Count()));
 }
+
+public record AggregatedError(string Message, int Count);

@@ -49,8 +49,8 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
             {
                 ConsoleBlock.Create(64, "Errors:", block =>
                 {
-                    foreach ((string errorMessage, int count) in loadTestResult.ErrorMessages)
-                        block.WriteProperty(errorMessage, count);
+                    foreach (AggregatedError error in loadTestResult.AggregatedErrors)
+                        block.WriteProperty(error.Message, error.Count);
                 });
             });
         }

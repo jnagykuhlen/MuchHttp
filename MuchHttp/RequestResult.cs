@@ -1,6 +1,6 @@
 ﻿namespace MuchHttp;
 
-public record RequestResult(TimeSpan Timing, string? Error = null)
+public record RequestResult(TimeSpan Timing, string? ErrorMessage = null)
 {
-    public bool IsSuccessful => Error is null;
+    public bool IsSuccessful => ErrorMessage is null;
 }
