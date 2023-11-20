@@ -14,6 +14,6 @@ public class ConsoleProgressBar : IProgress
 
     public void Complete()
     {
-        Console.WriteLine();
+        Console.Write("\n\n");
     }
 }

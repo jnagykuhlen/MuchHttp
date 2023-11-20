@@ -31,9 +31,8 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
         ConsoleProgressBar progressBar = new ConsoleProgressBar { Width = 64 };
 
         using var httpClient = new HttpClient();
-        var loadTestResult = await new LoadTest(httpClient, url, concurrentRequests, totalRequests).Perform(progressBar);
-
-        consoleWriter.WriteSpacing();
+        var loadTestResult = await new LoadTest(httpClient, url, concurrentRequests, totalRequests).PerformAsync(progressBar);
+        
         consoleWriter.WriteHeading("Summary:");
         consoleWriter.WriteProperty("Successful requests", loadTestResult.SuccessfulRequests);
         consoleWriter.WriteProperty("Failed requests", loadTestResult.FailedRequests);
@@ -42,6 +41,17 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
         consoleWriter.WriteProperty("Min", $"{loadTestResult.MinMilliseconds:N2} ms");
         consoleWriter.WriteProperty("Max", $"{loadTestResult.MaxMilliseconds:N2} ms");
         consoleWriter.WriteSpacing();
+
+        if (loadTestResult.FailedRequests > 0)
+        {
+            ConsoleBlockWriter errorConsoleWriter = new ConsoleBlockWriter { MaxPropertyWidth = 64 };
+        
+            errorConsoleWriter.WriteHeading("Errors:");
+            foreach ((string errorMessage, int count) in loadTestResult.ErrorMessages)
+                errorConsoleWriter.WriteProperty(errorMessage, count);
+        
+            errorConsoleWriter.WriteSpacing();
+        }
     }
     catch (Exception exception)
     {

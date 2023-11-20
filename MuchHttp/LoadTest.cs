@@ -5,7 +5,7 @@ namespace MuchHttp;
 
 public class LoadTest
 {
-    private const int UpdateProgressIntervalMilliseconds = 200;
+    private const int UpdateProgressIntervalMilliseconds = 100;
     
     private readonly HttpClient _httpClient;
     private readonly Uri _url;
@@ -20,12 +20,10 @@ public class LoadTest
         _totalRequests = totalRequests;
     }
 
-    public async Task<LoadTestResult> Perform(IProgress progress)
+    public async Task<LoadTestResult> PerformAsync(IProgress progress)
     {
         var remainingRequests = _totalRequests;
-        var completedRequests = 0;
-        var failedRequests = 0;
-        var requestTimings = new ConcurrentBag<TimeSpan>();
+        var requestResults = new ConcurrentBag<RequestResult>();
         
         var updateProgressTask = UpdateProgressAsync();
         var workerTasks = Enumerable.Repeat(ProcessRequestsAsync, _concurrentRequests)
@@ -35,37 +33,48 @@ public class LoadTest
         await Task.WhenAll(workerTasks);
         await updateProgressTask;
 
-        return new LoadTestResult(completedRequests, failedRequests, requestTimings);
+        return new LoadTestResult(requestResults);
         
         async Task ProcessRequestsAsync()
         {
-            var stopwatch = new Stopwatch();
             while (Interlocked.Decrement(ref remainingRequests) + 1 > 0)
             {
-                stopwatch.Restart();
-                var response = await _httpClient.GetAsync(_url);
-                stopwatch.Stop();
-
-                Interlocked.Increment(ref completedRequests);
-        
-                if (response.IsSuccessStatusCode)
-                    requestTimings.Add(stopwatch.Elapsed);
-                else
-                    Interlocked.Increment(ref failedRequests);
+                var requestResult = await ProcessRequestAsync();
+                requestResults.Add(requestResult);
             }
         }
 
         async Task UpdateProgressAsync()
         {
             await Task.Delay(UpdateProgressIntervalMilliseconds);
-            while (completedRequests < _totalRequests)
+            while (requestResults.Count < _totalRequests)
             {
-                progress.Report(completedRequests, _totalRequests);
+                progress.Report(requestResults.Count, _totalRequests);
                 await Task.Delay(UpdateProgressIntervalMilliseconds);
             }
 
-            progress.Report(completedRequests, _totalRequests);
+            progress.Report(_totalRequests, _totalRequests);
             progress.Complete();
+        }
+    }
+
+    private async Task<RequestResult> ProcessRequestAsync()
+    {
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            var response = await _httpClient.GetAsync(_url);
+            stopwatch.Stop();
+
+            if (response.IsSuccessStatusCode)
+                return new RequestResult(stopwatch.Elapsed);
+
+            return new RequestResult(stopwatch.Elapsed, $"HTTP status {response.StatusCode}");
+        }
+        catch (Exception exception)
+        {
+            stopwatch.Stop();
+            return new RequestResult(stopwatch.Elapsed, $"{exception.GetType().Name}: {exception.Message}");
         }
     }
 }

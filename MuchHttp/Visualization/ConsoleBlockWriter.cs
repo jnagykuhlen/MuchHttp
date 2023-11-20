@@ -9,21 +9,29 @@ public class ConsoleBlockWriter
         Console.WriteLine();
     }
 
-    public void WriteHeading(string line)
+    public void WriteHeading(string heading)
     {
-        Console.WriteLine(line);
+        Console.WriteLine(heading);
     }
 
     public void WriteProperty(string property, object value)
     {
+        if (property.Length > MaxPropertyWidth - 3)
+            property = property.Substring(0, MaxPropertyWidth - 3);
+        
         Console.WriteLine($" {property.PadRight(MaxPropertyWidth, '.')}: {value}");
     }
 
     public void WriteException(Exception exception)
     {
+        WriteLineColored($"{exception.GetType().Name}: {exception.Message}", ConsoleColor.Red);
+    }
+
+    private void WriteLineColored(string line, ConsoleColor color)
+    {
         var previousColor = Console.ForegroundColor;
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"{exception.GetType().Name}: {exception.Message}");
+        Console.ForegroundColor = color;
+        Console.WriteLine(line);
         Console.ForegroundColor = previousColor;
     }
 }
