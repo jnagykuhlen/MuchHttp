@@ -22,7 +22,7 @@ public class ConsoleBlock
 
     public void WriteProperty(string property, object value)
     {
-        if (property.Length > _maxPropertyWidth - EllipsisChars)
+        if (property.Length > _maxPropertyWidth)
             property = property.Substring(0, _maxPropertyWidth - EllipsisChars);
 
         Console.WriteLine($" {property.PadRight(_maxPropertyWidth, '.')}: {value}");
