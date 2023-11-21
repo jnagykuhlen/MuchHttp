@@ -21,7 +21,7 @@ public class LoadTestResult
         SuccessfulRequests = _requestResults.Count(requestResult => requestResult.IsSuccessful);
     }
 
-    public int CompletedRequests => _requestResults.Count;
+    private int CompletedRequests => _requestResults.Count;
 
     public int FailedRequests => CompletedRequests - SuccessfulRequests;
 
