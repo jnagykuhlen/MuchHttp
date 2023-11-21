@@ -22,7 +22,7 @@ public class LoadTest
 
     public async Task<LoadTestResult> PerformAsync(IProgress progress)
     {
-        var remainingRequests = _totalRequests;
+        var remainingRequests = new ConcurrentCounter(_totalRequests);
         var requestResults = new ConcurrentBag<RequestResult>();
         
         var updateProgressTask = UpdateProgressAsync();
@@ -37,7 +37,7 @@ public class LoadTest
         
         async Task ProcessRequestsAsync()
         {
-            while (Interlocked.Decrement(ref remainingRequests) + 1 > 0)
+            while (remainingRequests.TryDecrement())
             {
                 var requestResult = await ProcessRequestAsync();
                 requestResults.Add(requestResult);
