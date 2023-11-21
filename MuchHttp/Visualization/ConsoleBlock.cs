@@ -28,13 +28,13 @@ public class ConsoleBlock
         Console.WriteLine($" {property.PadRight(_maxPropertyWidth, '.')}: {value}");
     }
     
-    public static void Heading(string heading)
+    public static void FromHeading(string heading)
     {
         Console.WriteLine(heading);
         Console.WriteLine();
     }
 
-    public static void Exception(Exception exception)
+    public static void FromException(Exception exception)
     {
         Console.WriteLine($"{exception.GetType().Name}: {exception.Message}");
         Console.WriteLine();

@@ -23,7 +23,7 @@ return await rootCommand.InvokeAsync(args);
 async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
 {
     ConsoleBlock.Colored(ConsoleColor.Cyan, () =>
-        ConsoleBlock.Heading($"Starting load test with {totalRequests} requests ({concurrentRequests} concurrent)")
+        ConsoleBlock.FromHeading($"Starting load test with {totalRequests} requests ({concurrentRequests} concurrent)")
     );
 
     try
@@ -58,7 +58,7 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
     catch (Exception exception)
     {
         ConsoleBlock.Colored(ConsoleColor.Red, () =>
-            ConsoleBlock.Exception(exception)
+            ConsoleBlock.FromException(exception)
         );
     }
 }
