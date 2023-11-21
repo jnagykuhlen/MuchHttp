@@ -69,7 +69,7 @@ public class LoadTest
             if (response.IsSuccessStatusCode)
                 return new RequestResult(stopwatch.Elapsed);
 
-            return new RequestResult(stopwatch.Elapsed, $"HTTP status {response.StatusCode}");
+            return new RequestResult(stopwatch.Elapsed, $"HTTP status {(int)response.StatusCode}");
         }
         catch (Exception exception)
         {
