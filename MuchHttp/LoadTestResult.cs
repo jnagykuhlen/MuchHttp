@@ -35,5 +35,3 @@ public class LoadTestResult
         .GroupBy(requestResult => requestResult.ErrorMessage!)
         .Select(group => new AggregatedError(group.Key, group.Count()));
 }
-
-public record AggregatedError(string Message, int Count);
