@@ -28,7 +28,7 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
 
     try
     {
-        ConsoleProgressBar progressBar = new ConsoleProgressBar { Width = 64 };
+        var progressBar = new ConsoleProgressBar { Width = 64 };
 
         using var httpClient = new HttpClient();
         var loadTestResult = await new LoadTest(httpClient, url, concurrentRequests, totalRequests).PerformAsync(progressBar);
@@ -39,7 +39,7 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
             block.WriteProperty("Failed requests", loadTestResult.FailedRequests);
             block.WriteProperty("Average", $"{loadTestResult.AverageMilliseconds:N2} ms");
             block.WriteProperty("Median", $"{loadTestResult.MedianMilliseconds:N2} ms");
-            block.WriteProperty("Min", $"{loadTestResult.MinMilliseconds:N2} ms");
+            block.WriteProperty("Min", $"{loadTestResult.MinMilliseconds:N2} ms"); 
             block.WriteProperty("Max", $"{loadTestResult.MaxMilliseconds:N2} ms");
         });
 
@@ -49,7 +49,7 @@ async Task PerformAsync(Uri url, int concurrentRequests, int totalRequests)
             {
                 ConsoleBlock.Create(64, "Errors:", block =>
                 {
-                    foreach (AggregatedError error in loadTestResult.AggregatedErrors)
+                    foreach (var error in loadTestResult.AggregatedErrors)
                         block.WriteProperty(error.Message, error.Count);
                 });
             });
