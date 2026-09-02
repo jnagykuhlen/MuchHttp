@@ -2,14 +2,29 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <PublishSingleFile>true</PublishSingleFile>
+        <PublishTrimmed>true</PublishTrimmed>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PublishSingleFile>true</PublishSingleFile>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <AnalysisMode>All</AnalysisMode>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <WarningsAsErrors>true</WarningsAsErrors>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.CommandLine" Version="2.0.11"/>
+        <PackageReference Include="ArchitectureAnalyzer" Version="0.6.1" />
+      <PackageReference Include="System.CommandLine" Version="2.0.11"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="architecture.rules.json" />
+        <AdditionalFiles Include="CodeMetricsConfig.txt" />
     </ItemGroup>
 
 </Project>
